@@ -1,0 +1,23 @@
+name: CreativeCoding
+version: '${project.version}'
+main: timeplay.creativecoding.Main
+api-version: 1.16
+authors: [ TimePlay ]
+description: CreativePLUS coding
+commands:
+  creativecoding:
+    usage: /creativecoding
+    description: Coding creative
+    aliases: [cc,code,coding,creative]
+  build:
+    usage: /build
+    aliases: [игшдв]
+  dev:
+    usage: /dev
+    aliases: [develop,code,дум]
+  play:
+    usage: /play
+    aliases: [start,здфй,ыефке]
+  join:
+    usage: /join
+    aliases: [ощшт,ad,фд,id]
