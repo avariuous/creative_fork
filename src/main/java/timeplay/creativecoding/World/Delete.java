@@ -1,3 +1,9 @@
+/*
+ Creative- TimePlay 2022
+
+ Удалить мир
+ */
+
 package timeplay.creativecoding.World;
 
 import org.bukkit.Bukkit;
@@ -19,28 +25,34 @@ public class Delete {
             for (Player p :Bukkit.getOnlinePlayers().stream().filter(player1 -> player1.getWorld().equals(world)).collect(Collectors.toList())) {
                 Main.LobbyTeleport(p);
             }
-            player.sendTitle("§cУдаление...","§7Стираем данные мира...",20,60,20);
+            if (player != null) {
+                player.sendTitle("§cУдаление...","§7Стираем данные мира...",20,60,20);
+            }
             // Удаляет папку мира
-            deleteDirectory(Bukkit.getWorld(worldname).getWorldFolder());
+            deleteWorld(Bukkit.getWorld(worldname).getWorldFolder());
+            deleteWorldConfig(worldname);
             // После 3 секунд удаления мир отгружается полностью
             Bukkit.getServer().getScheduler().runTaskTimer(plugin, () -> {
                 Bukkit.unloadWorld(worldname,false);
             }, 60, 20);
         } catch (NullPointerException error1) {
-            player.playSound(((Player) player).getLocation(), Sound.valueOf("BLOCK_ANVIL_DESTROY"),100,2);
-            player.sendMessage("");
-            player.sendMessage("§cПроизошла критическая ошибка :(");
-            player.sendMessage("§cКод ошибки: §lNullPointerException");
-            player.sendMessage("");
+            if (player != null) {
+                player.playSound(((Player) player).getLocation(), Sound.valueOf("BLOCK_ANVIL_DESTROY"),100,2);
+                player.sendMessage("");
+                player.sendMessage("§cПроизошла критическая ошибка :(");
+                player.sendMessage("§cКод ошибки: §lNullPointerException");
+                player.sendMessage("");
+            }
         }
     }
 
-    public static boolean deleteDirectory(File path) {
+    // Удаление папки мира
+    public static boolean deleteWorld(File path) {
         if(path.exists()) {
             File files[] = path.listFiles();
             for(int i=0; i<files.length; i++) {
                 if(files[i].isDirectory()) {
-                    deleteDirectory(files[i]);
+                    deleteWorld(files[i]);
                 }
                 else {
                     files[i].delete();
@@ -48,5 +60,13 @@ public class Delete {
             }
         }
         return( path.delete() );
+    }
+
+    // Удаление файла конфигурации мира plugins\CreativeCoding\worlds\...yml
+    public static void deleteWorldConfig(String worldname) {
+        File file = new File((plugin.getDataFolder() + "\\worlds\\"), worldname + ".yml");
+        if(file.exists()) {
+            file.delete();
+        }
     }
 }

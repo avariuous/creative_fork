@@ -1,3 +1,9 @@
+/*
+ Creative- TimePlay 2022
+
+ Событие входа на сервер
+ */
+
 package timeplay.creativecoding.Events;
 
 import org.bukkit.event.EventHandler;

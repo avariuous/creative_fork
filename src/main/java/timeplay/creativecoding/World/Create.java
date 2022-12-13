@@ -1,18 +1,32 @@
+/*
+ Creative- TimePlay 2022
+
+ Создать мир
+ */
+
 package timeplay.creativecoding.World;
 
 import org.bukkit.*;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
+import static timeplay.creativecoding.World.Delete.plugin;
 
 public class Create {
     public static void CreateWorld(Player player) {
         String nickname = player.getName();
-        String worldname = nickname;
+        String worldname = String.valueOf(randomID());
         try {
             ArrayList<String> worlds = new ArrayList<String>();
             player.sendTitle("§aЗагрузка...","§7Подождите несколько секунд...",10,100,40);
             worlds.add(nickname + "1");
+            // Генерация и параметры мира
             Bukkit.createWorld(new WorldCreator(worldname).type(WorldType.FLAT).generateStructures(false));
             Bukkit.getWorld(worldname).getWorldBorder().setSize(100);
             setGamerule(worldname,GameRule.DO_MOB_SPAWNING,false);
@@ -22,6 +36,7 @@ public class Create {
             setGamerule(worldname,GameRule.SHOW_DEATH_MESSAGES,true);
             setGamerule(worldname,GameRule.DO_IMMEDIATE_RESPAWN,true);
             Bukkit.getWorld(worldname).setTime(0);
+            createFile(worldname, player);
             player.teleport(Bukkit.getWorld(worldname).getSpawnLocation());
             player.sendTitle("§6§lДОБРО ПОЖАЛОВАТЬ","§7Это §nтвой§7 мир, делай что хочешь");
             player.playSound(player.getLocation(), Sound.valueOf("UI_TOAST_CHALLENGE_COMPLETE"),100,2);
@@ -38,6 +53,7 @@ public class Create {
             for (int i = 0; i < worlds.size(); i++) {
                 player.sendMessage(worlds.get(i));
             }
+            // Попытка удалить все сущности с мира
             for (Entity entity : Bukkit.getWorld(worldname).getEntities()) {
                 if (entity instanceof Zombie) {
                     entity.remove();
@@ -61,8 +77,50 @@ public class Create {
         }
     }
 
+    // Установка параметра мира Gamerule
     public static void setGamerule(String worldname, GameRule gameRule, boolean bool) {
         Bukkit.getWorld(worldname).setGameRule(gameRule,bool);
+    }
+
+    // Создать файл plugins\CreativeCoding\worlds\...yml
+    public static void createFile(String worldname, Player player) {
+        File file = new File((plugin.getDataFolder() + "\\worlds\\"), worldname + ".yml");
+        final FileConfiguration worldfile = YamlConfiguration.loadConfiguration(file);
+        if(!file.exists()) {
+            try {
+                file.createNewFile();
+                // Создание и заполнение параметров
+                worldfile.createSection("owner");
+                worldfile.set("owner", player.getName());
+                worldfile.createSection("title");
+                worldfile.set("title", "§7Мир игрока §f" + player.getName());
+                worldfile.createSection("description");
+                worldfile.set("description", "§7Мой чудесный мир!");
+                worldfile.createSection("icon");
+                worldfile.set("icon", String.valueOf(Material.DIAMOND));
+                // Сохранение файла (обязательное)
+                worldfile.save(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static int randomID() {
+        int min = 1;
+        int max = 10000;
+        int result = (int)(Math.random()*(max-min+1)+min);
+        File folder = new File(plugin.getDataFolder() + "\\worlds\\");
+        List<String> ids;
+        for (File file : folder.listFiles()) {
+            if (file.isFile()) {
+                String ID = file.getName().replace(".yml","");
+                if (String.valueOf(result).equals(ID)) {
+                    randomID();
+                }
+            }
+        }
+        return result;
     }
 }
 

@@ -1,3 +1,10 @@
+/*
+ Creative- TimePlay 2022
+
+ Дополнительный класс для команды Join, просто
+ чтобы был список при нажатии Таба.
+ */
+
 package timeplay.creativecoding.Commands;
 
 import org.bukkit.Bukkit;

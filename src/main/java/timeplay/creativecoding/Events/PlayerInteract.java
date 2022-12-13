@@ -1,3 +1,9 @@
+/*
+ Creative- TimePlay 2022
+
+ Событие использования
+ */
+
 package timeplay.creativecoding.Events;
 
 import org.bukkit.Bukkit;

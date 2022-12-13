@@ -1,3 +1,12 @@
+/*
+ Creative- TimePlay 2022
+
+ В этом классе содержится команда /dev, которая
+ позволяет создателю мира перейти в режим кодинга.
+
+ !!! На данной версии этот режим бесполезен, ведь ещё не придумана генерация кода
+ */
+
 package timeplay.creativecoding.Commands;
 
 import org.bukkit.*;
@@ -6,19 +15,25 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import timeplay.creativecoding.World.GetData;
 
 public class Dev implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             World world = ((Player) sender).getWorld();
-            ((Player) sender).setGameMode(GameMode.CREATIVE);
-            ((Player) sender).getPlayer().getInventory().clear();
-            ((Player) sender).sendMessage("§f Вы перешли в режим §6редактирования кода§f.");
-            ((Player) sender).sendTitle("§fРежим §6кода","§fВы перешли в §6код§f.");
-            ((Player) sender).teleport(world.getSpawnLocation());
-            ((Player) sender).playSound(((Player) sender).getLocation(), Sound.valueOf("BLOCK_BEACON_POWER_SELECT"),100,1.3f);
-            devItems(((Player) sender).getPlayer());
+            // Проверка на владельца мира
+            if (GetData.isOwner(((Player) sender).getPlayer())) {
+                ((Player) sender).setGameMode(GameMode.CREATIVE);
+                ((Player) sender).getPlayer().getInventory().clear();
+                ((Player) sender).sendMessage("§f Вы перешли в режим §6редактирования кода§f.");
+                ((Player) sender).sendTitle("§fРежим §6кода", "§fВы перешли в §6код§f.");
+                ((Player) sender).teleport(world.getSpawnLocation());
+                ((Player) sender).playSound(((Player) sender).getLocation(), Sound.valueOf("BLOCK_BEACON_POWER_SELECT"), 100, 1.3f);
+                devItems(((Player) sender).getPlayer());
+            } else {
+                sender.sendMessage("§c Ты не владелец этого мира!");
+            }
         }
         return true;
     }

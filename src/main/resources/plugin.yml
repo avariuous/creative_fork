@@ -3,12 +3,14 @@ version: '${project.version}'
 main: timeplay.creativecoding.Main
 api-version: 1.16
 authors: [ TimePlay ]
-description: CreativePLUS coding
+description: Let players create the worlds
 commands:
   creativecoding:
     usage: /creativecoding
-    description: Coding creative
-    aliases: [cc,code,coding,creative]
+    aliases: [coding,creative]
+  chat:
+    usage: /creativechat
+    aliases: [cc,сс]
   build:
     usage: /build
     aliases: [игшдв]
@@ -20,4 +22,19 @@ commands:
     aliases: [start,здфй,ыефке]
   join:
     usage: /join
-    aliases: [ощшт,ad,фд,id]
+    aliases: [ощшт,id]
+  ad:
+    usage: /ad
+    aliases: [фв]
+  like:
+    usage: /like
+    aliases: [дшлу, vote, v]
+  spawn:
+    usage: /spawn
+    aliases: [спавн, ізфцт, ызфцт, hub, lobby]
+  menu:
+    usage: /menu
+    aliases: [меню, games, worlds, ьутг, minigames]
+  settings:
+    usage: /settings
+    aliases: [world, game, іуеештпі, ыуеештпы, setting]

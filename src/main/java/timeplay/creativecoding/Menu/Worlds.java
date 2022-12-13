@@ -1,3 +1,10 @@
+/*
+ Creative- TimePlay 2022
+
+ Меню Список всех миров
+ Выводит в меню список всех миров
+ */
+
 package timeplay.creativecoding.Menu;
 
 import org.bukkit.Bukkit;
@@ -8,39 +15,49 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import timeplay.creativecoding.World.GetData;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Worlds {
 
+    // Показать меню
     public static void openMenu(Player player) {
         Inventory menu = Bukkit.createInventory(null, 54, "Миры от игроков");
         int slot = 0;
+        // Заполнение меню мирами
         for (World w: Bukkit.getWorlds()) {
             if (!(w.getName().equals("world_the_end") || w.getName().equals("world"))) {
-                ItemStack item = new ItemStack(Material.DIAMOND);
-                ItemMeta meta = item.getItemMeta();
-                meta.setDisplayName("§7Мир§f " + w.getName());
+                ItemStack worlditem = new ItemStack(GetData.icon(w));
+                ItemMeta meta = worlditem.getItemMeta();
+                meta.setDisplayName(GetData.title(w));
                 List<String> lore = new ArrayList<String>();
                 lore.add("§8ID: " + w.getName());
                 lore.add(" ");
-                lore.add("§7 Мой прекрасный мир!");
+                lore.add("§7" + GetData.description(w));
                 lore.add(" ");
-                lore.add("§7 Мир: §f" + w.getName());
-                lore.add("§7 Онлайн: §f" + Bukkit.getOnlinePlayers().stream().filter(player1 -> player1.getWorld().equals(w)).collect(Collectors.toList()).size());
-                lore.add("§7 Посетителей: §fСкоро");
+                lore.add("§7 Онлайн: §f" + GetData.online(w));
+                lore.add("§7 Создатель: §f" + GetData.owner(w));
                 lore.add(" ");
                 lore.add("§eНажми, чтобы подключиться");
                 meta.setLore(lore);
-                item.setItemMeta(meta);
-                if (slot < 54) {
-                    menu.setItem(slot, item);
+                worlditem.setItemMeta(meta);
+                if (slot < 46) {
+                    menu.setItem(slot, worlditem);
                     slot++;
                 }
             }
         }
+        // Стеклянное заполнение
+        for (int slot2 = 45; slot2 < 54; slot2++) {
+            ItemStack glass = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+            ItemMeta meta = glass.getItemMeta();
+            meta.setDisplayName(" ");
+            glass.setItemMeta(meta);
+            menu.setItem(slot2, glass);
+        }
+        // Открыть меню
         player.openInventory(menu);
         player.playSound(player.getLocation(), Sound.valueOf("BLOCK_ENDER_CHEST_OPEN"),100,1.3f);
     }

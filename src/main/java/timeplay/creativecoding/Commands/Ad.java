@@ -1,10 +1,3 @@
-/*
- Creative- TimePlay 2022
-
- В этом классе содержится команда /join или /ad,
- она позволяет зайти на любой мир с помощью его ID.
- */
-
 package timeplay.creativecoding.Commands;
 
 import org.bukkit.Bukkit;
@@ -14,10 +7,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import timeplay.creativecoding.World.GetData;
 
-public class Join implements CommandExecutor {
+public class Ad implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender,Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = ((Player) sender).getPlayer();
             if (args.length == 1) {
@@ -34,9 +28,18 @@ public class Join implements CommandExecutor {
                     player.sendMessage("§c Мира с таким ID не существует.");
                 }
             } else {
-                player.sendMessage("§f Используй §6/join ID мира");
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    p.sendMessage("");
+                    p.sendMessage("§7" + player.getName() + "§7 приглашает вас в игру:");
+                    p.sendMessage("§f" + GetData.title(player.getWorld()));
+                    p.sendMessage("");
+                    p.sendMessage("§a [Нажми, чтобы играть]");
+                    p.sendMessage("");
+                }
             }
         }
+
         return true;
     }
+
 }
