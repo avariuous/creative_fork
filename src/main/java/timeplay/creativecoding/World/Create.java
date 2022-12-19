@@ -105,7 +105,9 @@ public class Create {
             }
         }
     }
-
+ 
+    // Генератор ID мира
+    // Нужно сделать нормальную проверку!!!
     public static int randomID() {
         int min = 1;
         int max = 10000;
@@ -113,6 +115,7 @@ public class Create {
         File folder = new File(plugin.getDataFolder() + "\\worlds\\");
         List<String> ids;
         for (File file : folder.listFiles()) {
+         // Скорее всего проверка ни о чем, надо бы заменить?
             if (file.isFile()) {
                 String ID = file.getName().replace(".yml","");
                 if (String.valueOf(result).equals(ID)) {
