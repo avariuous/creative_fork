@@ -1,5 +1,7 @@
-# Creative- DEMO
-### Плагин на Креатив-, а точнее на миры и кодинг.
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
+# Creative
+### Плагин Minecraft, который позволяет игрокам создавать и посещать миры.
 ### Важно! Эта версия плагина не стабильна и является демонстрационной.
 
 [![N|Solid](https://media.discordapp.net/attachments/310217885203300358/1050849486886408212/image.png)](https://media.discordapp.net/attachments/310217885203300358/1050849486886408212/image.png)
