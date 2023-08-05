@@ -1,5 +1,5 @@
-name: CreativeCoding
-version: '1.0'
+name: Creative
+version: '1.2'
 main: timeplay.creativecoding.Main
 api-version: 1.16
 authors: [ TimePlay ]

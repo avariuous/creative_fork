@@ -1,5 +1,5 @@
 /*
- Creative- TimePlay 2022
+ Creative TimePlay 2023
 
  Главный класс, запускает сам плагин.
  Содержит так-же телепортацию в лобби, получение префикса чата плагина.
@@ -13,11 +13,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import timeplay.creativecoding.Coding.PlaceBreak;
-import timeplay.creativecoding.Commands.*;
-import timeplay.creativecoding.Events.*;
+import timeplay.creativecoding.coding.PlaceBreak;
+import timeplay.creativecoding.commands.*;
+import timeplay.creativecoding.events.*;
 
-import java.io.File;
+import static timeplay.creativecoding.utils.FileUtils.loadWorlds;
 
 public final class Main extends JavaPlugin implements Listener {
     @Override
@@ -25,7 +25,7 @@ public final class Main extends JavaPlugin implements Listener {
         // Регистрация команд
         this.getCommand("creativecoding").setExecutor(new CreativeCoding());
         this.getCommand("chat").setExecutor(new CreativeChat());
-        this.getCommand("join").setExecutor(new timeplay.creativecoding.Commands.Join());
+        this.getCommand("join").setExecutor(new timeplay.creativecoding.commands.Join());
         this.getCommand("ad").setExecutor(new Ad());
         this.getCommand("join").setTabCompleter(new JoinTab());
         this.getCommand("play").setExecutor(new Play());
@@ -33,7 +33,7 @@ public final class Main extends JavaPlugin implements Listener {
         this.getCommand("dev").setExecutor(new Dev());
         // Регистрация событий
         getServer().getPluginManager().registerEvents(new PlaceBreak(), this);
-        getServer().getPluginManager().registerEvents(new timeplay.creativecoding.Events.Join(), this);
+        getServer().getPluginManager().registerEvents(new timeplay.creativecoding.events.Join(), this);
         getServer().getPluginManager().registerEvents(new Quit(), this);
         getServer().getPluginManager().registerEvents(new Respawn(), this);
         getServer().getPluginManager().registerEvents(new Death(), this);
@@ -43,24 +43,7 @@ public final class Main extends JavaPlugin implements Listener {
         saveDefaultConfig();
         Bukkit.getServer().getLogger().info("Creative- is enabled.");
         // Подгрузка миров игроков
-        File folder = new File(this.getDataFolder() + "\\worlds\\");
-        File[] listOfFiles = folder.listFiles();
-        try {
-            for (File file : listOfFiles) {
-                if (file.isFile()) {
-                    String fileName = file.toString().replace(this.getDataFolder() + "\\worlds\\", "").replace(".yml", "");
-                    WorldCreator load = new WorldCreator(fileName);
-                    try {
-                        Bukkit.getLogger().info("Creative- loads world: " + fileName);
-                        load.createWorld();
-                    } catch (NullPointerException error) {
-                        Bukkit.getLogger().warning("Error while loading " + fileName);
-                    }
-                }
-            }
-        } catch (NullPointerException error) {
-            Bukkit.getLogger().warning("Error while loading worlds... :(");
-        }
+        loadWorlds();
     }
 
     @Override
@@ -98,5 +81,9 @@ public final class Main extends JavaPlugin implements Listener {
         } catch (NullPointerException e) {
             return "§2Миры §8> §f";
         }
+    }
+
+    public static void clearTitle(Player player) {
+        player.sendTitle("§f","§f");
     }
 }
