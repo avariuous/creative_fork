@@ -8,14 +8,21 @@
 package timeplay.creativecoding.commands;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import timeplay.creativecoding.utils.CooldownUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static timeplay.creativecoding.commands.CommandAd.plugin;
+import static timeplay.creativecoding.utils.CooldownUtils.getCooldown;
+import static timeplay.creativecoding.utils.CooldownUtils.setCooldown;
+import static timeplay.creativecoding.utils.ErrorUtils.sendWarningErrorMessage;
+import static timeplay.creativecoding.utils.MessageUtils.getLocaleMessage;
 
 public class CreativeChat implements CommandExecutor {
 
@@ -25,23 +32,43 @@ public class CreativeChat implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             if (args.length > 0) {
-                if (args[0].equalsIgnoreCase("off")) {
-                    creativeChatOff.add(((Player) sender).getPlayer());
-                    sender.sendMessage("§2Креатив-чат §8> §fВы §6отключили§f креатив чат, вам не будут поступать сообщения.");
-                } else if (args[0].equalsIgnoreCase("on")) {
-                    creativeChatOff.remove(((Player) sender).getPlayer());
-                    sender.sendMessage("§2Креатив-чат §8> §fВы §6включили§f креатив чат, теперь общайтесь!");
+                if (args.length == 1 && (args[0].equalsIgnoreCase("off") || args[0].equalsIgnoreCase("on"))) {
+                    if (getCooldown(((Player) sender).getPlayer(), CooldownUtils.CooldownType.GENERIC_COMMAND) > 0) {
+                        sender.sendMessage(getLocaleMessage("cooldown").replace("%cooldown%",String.valueOf(getCooldown(((Player) sender).getPlayer(), CooldownUtils.CooldownType.GENERIC_COMMAND))));
+                        return true;
+                    }
+                    if (args[0].equalsIgnoreCase("off")) {
+                        creativeChatOff.add(((Player) sender).getPlayer());
+                        sender.sendMessage(getLocaleMessage("creative-chat.turned-off"));
+                    } else if (args[0].equalsIgnoreCase("on")) {
+                        creativeChatOff.remove(((Player) sender).getPlayer());
+                        sender.sendMessage(getLocaleMessage("creative-chat.turned-on"));
+                    }
+                    setCooldown(((Player) sender).getPlayer(), plugin.getConfig().getInt("cooldowns.generic-command"), CooldownUtils.CooldownType.GENERIC_COMMAND);
                 } else {
                     if (creativeChatOff.contains(((Player) sender).getPlayer())) {
-                        sender.sendMessage("§c Напиши /cc on, чтобы включить чат");
+                        sender.sendMessage(getLocaleMessage("creative-chat.on-usage"));
                     } else {
-                        for (Player p : Bukkit.getOnlinePlayers().stream().filter(player1 -> (!(creativeChatOff.contains(player1)))).collect(Collectors.toList())) {
-                            p.sendMessage("§2Креатив-чат §8> §7" + sender.getName() + "§7: " + String.join(" ",args));
+                        if (getCooldown(((Player) sender).getPlayer(), CooldownUtils.CooldownType.CREATIVE_CHAT) > 0) {
+                            sender.sendMessage(getLocaleMessage("creative-chat.cooldown").replace("%cooldown%",String.valueOf(getCooldown(((Player) sender).getPlayer(), CooldownUtils.CooldownType.CREATIVE_CHAT))));
+                            return true;
+                        }
+                        setCooldown(((Player) sender).getPlayer(), plugin.getConfig().getInt("cooldowns.creative-chat"), CooldownUtils.CooldownType.CREATIVE_CHAT);
+                        Bukkit.getLogger().info("[CREATIVE-CHAT] "+sender.getName()+": "+String.join(" ",args));
+                        for (Player p : Bukkit.getOnlinePlayers()) {
+                            if (!(creativeChatOff.contains(p))) {
+                                try {
+                                    p.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.getConfig().getString("messages.cc-chat").replace("%player%",sender.getName()).replace("%ccprefix%",plugin.getConfig().getString("messages.cc-prefix")).replace("%message%",String.join(" ",args))));
+                                } catch (NullPointerException e) {
+                                    sendWarningErrorMessage("Не найдено в конфиге значение messages.cc-prefix messages.cc-chat");
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
             } else {
-                sender.sendMessage("§cИспользуйте /cc сообщение");
+                sender.sendMessage(getLocaleMessage("creative-chat.cc-usage"));
             }
         }
         return true;

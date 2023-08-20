@@ -1,2 +1,24 @@
-prefix: "&2Миры &8» &f"
 last-world-id: 0
+
+messages:
+  locale: ru
+  prefix: "&2 Миры &8» &f"
+  cc-prefix: "&2 Креатив-чат &8» &7"
+  cc-chat: "%ccprefix%&7%player%&7: %message%"
+  world-chat: "&7 %player% &8» &f%message%"
+  version: "&f Этот сервер использует &6Creative &f%version%."
+
+cooldowns:
+  generic-command: 5
+  advertisement: 120
+  creative-chat: 10
+  world-chat: 2
+
+groups:
+  default: # default - по умолчанию у каждого игрока, не нужны права
+    creating-world:
+      limit: 2
+  premium:
+    permission: "creative.group.premium"
+    creating-world:
+      limit: 4

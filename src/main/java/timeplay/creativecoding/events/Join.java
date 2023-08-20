@@ -15,6 +15,6 @@ public class Join implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        Main.LobbyTeleport(event.getPlayer());
+        Main.teleportToLobby(event.getPlayer());
     }
 }

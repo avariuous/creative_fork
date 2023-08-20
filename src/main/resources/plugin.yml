@@ -1,5 +1,5 @@
 name: Creative
-version: '1.2'
+version: '1.3'
 main: timeplay.creativecoding.Main
 api-version: 1.16
 authors: [ TimePlay ]
@@ -35,6 +35,6 @@ commands:
   menu:
     usage: /menu
     aliases: [меню, games, worlds, ьутг, minigames]
-  settings:
-    usage: /settings
-    aliases: [world, game, іуеештпі, ыуеештпы, setting]
+  world:
+    usage: /world
+    aliases: [settings, game, іуеештпі, ыуеештпы, setting]
