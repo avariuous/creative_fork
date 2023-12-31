@@ -1,24 +1,21 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-# Creative 🌎
-### Плагин Minecraft, который позволяет игрокам создавать и посещать миры.
+# Creative+ 🌎
+### Let your players create a world.
 
-Creative - это плагин, который позволит игрокам создавать миры, настраивать их, строить что-то, а так-же посещать миры других игроков. Он делается для серверов с ядром `PaperMC` версии `1.16.5`.
-
-#### ⚠️ Важно! Эта версия плагина не стабильна и является демонстрационной.
-Этот плагин кишит багами и он явно не претендует на "лучше чем другие креативы".
+Creative+ - plugin, that allows players to create their worlds, set up them, build something, and visit other players worlds. Plugin is made for `PaperMC` version `1.16.5`.
 
 [![N|Solid](https://media.discordapp.net/attachments/990341925922017350/1152482140697661561/image.png?width=798&height=600)
 
-## Цели создания плагина 🤔
+## Goals 🤔
 
-### 🐸 Улучшить свои навыки по программированию на Жабе.
+### 🐸 Increase Java skills.
 
-### 🤓 Попробовать сделать что-то похожее на Креатив+ с Mineland.
+### 🤓 Try to create something like Creative+ from Mineland or DiamondFire
 
-### 😎 Обеспечить сервера хотя-бы каким-то бесплатным плагином на Креатив с мирами и кодингом.
+### 😎 Create a plugin for all servers
 
-## Необходимо сделать 📜
+## Needs to be created 📜
 
 - [x] **Создание мира**
 
@@ -28,35 +25,37 @@ Creative - это плагин, который позволит игрокам �
 
 - [x] Лимит миров на игрока
 
-- [ ] Правильная генерация (шаблоны миров + генерация земли только до границ мира)
+- [ ] World Templates
 
-- [ ] Режим разработчика, кодинг и DEV-мир
+- [x] **Режим разработчика, кодинг и DEV-мир**
 
-- [ ] Распределение прав участников на /build /dev
+- [x] **Распределение прав участников на /build /dev**
 
-- [ ] И многое другое...
+- [ ] Much more...
 
 ## Команды
 
-`/menu` - **Открыть меню всех миров**
+`/menu /games /worlds` - **Open**
 
-`/world` - **Открыть настройки мира**
+`/world` - **Open world settings**
 
-`/world delete` - **Удалить мир** (`creative.delete`) (для админов: `creative.deletebypass`)
+`/world delete` - **Delete world** (`creative.delete`) (for admins: `creative.deletebypass`)
 
-`/join ID` - **Подключиться к миру**
+`/join ID` - **Join the world**
 
-`/ad` - **Прорекламировать мир**
+`/ad` - **Share your world**
 
-`/build` - **Запустить мир в режиме строительства**
+`/build` - **Launch world in build mode**
 
-`/play` - **Запустить мир в режиме игры (бесполезно)**
+`/play` - **Launch world in play mode**
 
-`/dev` - **Запустить мир в режиме кодинга (бесполезно)**
+`/dev` - **Launch development world**
 
-`/creative reload` - **Перезапустить плагин** (`creative.reload`)
+`/creative reload` - **Reload plugin** (`creative.reload`)
 
-## Старые версии
+`/creative resetlocale` - **Reset locale messages.** Useful only when developing plugin (`creative.resetlocale`)
+
+## Old versions
 
 <details>
   <summary> Demo 1.1 | 2022 </summary>
@@ -86,19 +85,19 @@ Creative - это плагин, который позволит игрокам �
   - Создана простая генерация плоского мира
 </details>
 
-## Помочь проекту
+## Support me
 
-Если вы хотите мне чем-то помочь, то вот:
+If you want to support me, then you can:
 
-**👾 Discord:** `.timeplay`
+**👾 Contact me on Discord:** `.timeplay`
 
-**💵 Подарить деньги:** [studio.mineland.net/worlds/timeplay](https://studio.mineland.net/worlds/timeplay)
+**💵 Gift me a money:** [studio.mineland.net/worlds/timeplay](https://studio.mineland.net/worlds/timeplay)
 
-## Лицензия
+## License
 
-Плагин использует лицензию GNU GPL v3.0
-То есть, вы можете скачать и изменить исходный код этого плагина, а после этого ещё и распространить.
-Однако при распространении вам следует выложить тоже изменённый вами исходный код плагина на GitHub.
+Plugin is licensed by GNU GPL v3.0 (actually no certificate, but pls trust me)
+So, you can download and modify source of plugin, and share it.
+But when sharing a plugin you need to public source code on GitHub.
 
 The GNU General Public License v3.0
 https://www.gnu.org/copyleft/gpl.html
