@@ -16,6 +16,7 @@ import org.bukkit.entity.*;
 import org.bukkit.plugin.Plugin;
 import timeplay.creativecoding.Main;
 import timeplay.creativecoding.utils.CooldownUtils;
+import timeplay.creativecoding.utils.FileUtils;
 
 import static timeplay.creativecoding.utils.CooldownUtils.getCooldown;
 import static timeplay.creativecoding.utils.CooldownUtils.setCooldown;
@@ -42,32 +43,40 @@ public class CommandCreative implements CommandExecutor {
                 switch (args[0]) {
                     case ("reload"):
                         if (sender.hasPermission("creative.reload")) {
-                            sender.sendMessage("§6Creative §8| §7Перезагрузка плагина и конфига...");
-                            ((Player) sender).sendTitle("§6§lCREATIVE", "§fПерезагрузка плагина и конфига...", 20, 60, 20);
+                            sender.sendMessage("§fCreative§b+ §8| §7Перезагрузка плагина и конфига...");
+                            ((Player) sender).sendTitle("§f§lCREATIVE§b§l+", "§fПерезагрузка плагина и конфига...", 20, 60, 20);
                             ((Player) sender).playSound(((Player) sender).getLocation(), Sound.valueOf("ENTITY_PLAYER_LEVELUP"), 100, 1);
                             plugin.reloadConfig();
                             loadLocales();
-                            sender.sendMessage("§6Creative §8| §7Плагин и конфиг перезагружен §aуспешно");
-                            ((Player) sender).sendTitle("§6§lCREATIVE", "§fУспешно перезагружено!", 20, 60, 20);
+                            sender.sendMessage("§fCreative§b+ §8| §7Плагин и конфиг перезагружен §aуспешно");
+                            ((Player) sender).sendTitle("§f§lCREATIVE§b§l+", "§fУспешно перезагружено!", 20, 60, 20);
                             ((Player) sender).playSound(((Player) sender).getLocation(), Sound.valueOf("ENTITY_PLAYER_LEVELUP"), 100, 2);
+                        }
+                        break;
+                    case ("resetlocale"):
+                        if (sender.hasPermission("creative.resetlocale")) {
+                            sender.sendMessage("§fCreative§b+ §8| §fСброс файла локализации...");
+                            FileUtils.resetLocales();
+                            sender.sendMessage("§fCreative§b+ §8| §fФайл локализации §6успешно§f сброшен.");
+                            ((Player) sender).playSound(((Player) sender).getLocation(), Sound.valueOf("ENTITY_PLAYER_LEVELUP"), 100, 1);
                         }
                         break;
                 }
             // Если это консоль
             } else {
                 if (args[0].equals("reload")) {
-                    Bukkit.getLogger().info("Creative- is reloading...");
+                    Bukkit.getLogger().info("Creative+ is reloading...");
                     plugin.reloadConfig();
                     loadLocales();
-                    Bukkit.getLogger().info("Creative- is reloaded!");
+                    Bukkit.getLogger().info("Creative+ is reloaded!");
                 }
             }
         // Если аргументов команды нет
         } else {
             try {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.version").replace("%version%", Main.version)));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.version").replace("%version%", Main.version).replace("%codename%",Main.codename)));
             } catch (NullPointerException e) {
-                sender.sendMessage("Creative %version%".replace("%version%",Main.version));
+                sender.sendMessage("§fCreative§b+ %version%§f: %codename%".replace("%version%",Main.version).replace("%codename%",Main.codename));
             }
         }
         return true;

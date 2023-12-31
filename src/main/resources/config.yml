@@ -1,12 +1,21 @@
+#
+# CREATIVE+ 1.4
+#  Keep your friends close
+#  Config
+#
+# Notice: This plugin in development.
+#
+
+version: 1.4
 last-world-id: 0
 
 messages:
-  locale: ru
-  prefix: "&2 Миры &8» &f"
-  cc-prefix: "&2 Креатив-чат &8» &7"
-  cc-chat: "%ccprefix%&7%player%&7: %message%"
-  world-chat: "&7 %player% &8» &f%message%"
-  version: "&f Этот сервер использует &6Creative &f%version%."
+  locale: en #Supported: en, ru | Для русского языка: ru
+  prefix: "&6 Worlds &8| &f"
+  cc-prefix: "&6 Creative Chat &8| &7"
+  cc-chat: "%cc-prefix%&7%player%&7: %message%" # You can use PAPI placeholders here
+  world-chat: "&7 %player% &8» &f%message%" # and here
+  version: "\n&f This server uses &f&lCreative&b&l+ &b%version%&f: %codename%&f.\n &cMcChicken 2017-2023\n &f"
 
 cooldowns:
   generic-command: 5
@@ -15,10 +24,16 @@ cooldowns:
   world-chat: 2
 
 groups:
-  default: # default - по умолчанию у каждого игрока, не нужны права
+  default: # default - by default for any player, no permissions required
     creating-world:
       limit: 2
+    world:
+      entities-limit: 50 # limit for spawned entities in world
+      redstone-operations-limit: 20 # limit for redstone operations in world
   premium:
     permission: "creative.group.premium"
     creating-world:
       limit: 4
+    world:
+      entities-limit: 200
+      redstone-operations-limit: 50

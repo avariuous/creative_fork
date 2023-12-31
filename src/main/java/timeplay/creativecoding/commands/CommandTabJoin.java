@@ -10,12 +10,12 @@ package timeplay.creativecoding.commands;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import timeplay.creativecoding.world.Plot;
+import timeplay.creativecoding.plots.Plot;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static timeplay.creativecoding.world.PlotManager.plots;
+import static timeplay.creativecoding.plots.PlotManager.plots;
 
 public class CommandTabJoin implements TabCompleter {
 

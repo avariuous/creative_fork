@@ -6,19 +6,23 @@
 
 package timeplay.creativecoding.events;
 
-import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import timeplay.creativecoding.coding.activators.PlayerJoinActivator;
+import timeplay.creativecoding.coding.activators.PlayerQuitActivator;
 import timeplay.creativecoding.commands.CreativeChat;
-import timeplay.creativecoding.scoreboard.LobbyScoreboard;
-import timeplay.creativecoding.scoreboard.WorldScoreboard;
-import timeplay.creativecoding.world.Plot;
+import timeplay.creativecoding.plots.Plot;
+import timeplay.creativecoding.plots.PlotManager;
+import timeplay.creativecoding.utils.FileUtils;
 
+import java.util.List;
+
+import static timeplay.creativecoding.plots.PlotManager.*;
 import static timeplay.creativecoding.utils.MessageUtils.getLocaleMessage;
-import static timeplay.creativecoding.world.PlotManager.unloadPlot;
 
 public class ChangedWorld implements Listener {
 
@@ -33,38 +37,66 @@ public class ChangedWorld implements Listener {
         CreativeChat.creativeChatOff.remove(event.getPlayer());
         event.getPlayer().clearTitle();
 
-        //if (LobbyScoreboard.scoreboardTasks.containsKey(player)) LobbyScoreboard.hide(player);
-        //if (WorldScoreboard.scoreboardTasks.containsKey(player)) WorldScoreboard.hide(player);
+        Plot oldPlot = PlotManager.getPlotByWorld(oldWorld);
+        Plot newPlot = PlotManager.getPlotByWorld(newWorld);
 
-        if (newWorld.getName().startsWith("plot")) {
-            Plot plot = Plot.getPlotByWorld(newWorld);
-            //WorldScoreboard.show(player);
-            for (Player p : Plot.getPlayers(plot)) {
-                p.sendMessage(getLocaleMessage("world.joined",player));
-            }
-        }
-        if (oldWorld.getName().startsWith("plot")) {
-            Plot plot = Plot.getPlotByWorld(oldWorld);
-            //LobbyScoreboard.show(player);
-            if (Plot.getPlayers(plot).size() > 0) {
-                for (Player p : Plot.getPlayers(plot)) {
-                    p.sendMessage(getLocaleMessage("world.left",player));
+        if (newPlot != null) {
+            if (!oldWorld.getName().endsWith("dev")) {
+                if (newPlot.getOnline() < 1) return;
+                for (Player p : newPlot.getPlayers()) {
+                    if (newPlot.joinMesssagesFlag == 1) {
+                        p.sendMessage(getLocaleMessage("world.joined", player));
+                    }
+                    p.showPlayer(player);
+                    player.showPlayer(p);
                 }
             } else {
-                unloadPlot(plot);
+                if (!newWorld.getName().equals(oldWorld.getName().replace("dev", ""))) {
+                    Plot oldPlot_ = PlotManager.getPlotByWorldName(oldWorld.getName().replace("dev", ""));
+                    if (oldPlot_ != null) {
+                        if (oldPlot_.getOnline() > 0) {
+                            for (Player p : oldPlot_.getPlayers()) {
+                                if (oldPlot_.joinMesssagesFlag == 1) {
+                                    p.sendMessage(getLocaleMessage("world.left", player));
+                                }
+                                p.hidePlayer(player);
+                                player.hidePlayer(p);
+                            }
+                        }
+                    }
+                }
             }
         }
 
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.getWorld() != player.getWorld()) {
-                p.hidePlayer(player);
-                player.hidePlayer(p);
-            } else {
-                p.showPlayer(player);
-                player.showPlayer(p);
+        if (oldPlot != null) {
+            List<String> notTrustedDevelopers = FileUtils.getPlayersFromPlotConfig(oldPlot, Plot.PlayersType.DEVELOPERS_NOT_TRUSTED);
+            List<String> notTrustedBuilders = FileUtils.getPlayersFromPlotConfig(oldPlot, Plot.PlayersType.BUILDERS_NOT_TRUSTED);
+            if (!oldWorld.getName().endsWith("dev")) oldPlot.script.executeActivator(new PlayerQuitActivator(), player);
+            if (!newWorld.getName().endsWith("dev")) {
+                if (oldPlot.getOnline() > 0) {
+                    for (Player p : oldPlot.getPlayers()) {
+                        if (oldPlot.joinMesssagesFlag == 1) {
+                            p.sendMessage(getLocaleMessage("world.left",player));
+                            if (oldPlot.plotMode == Plot.Mode.BUILD && oldPlot.owner.equalsIgnoreCase(player.getName())) {
+                                if (notTrustedBuilders.contains(p.getName())) {
+                                    p.setGameMode(GameMode.ADVENTURE);
+                                    p.sendMessage(getLocaleMessage("world.build-mode.cant-build-when-offline"));
+                                }
+                            }
+                            if (getDevPlot(p) != null && oldPlot.owner.equalsIgnoreCase(player.getName())) {
+                                if (notTrustedDevelopers.contains(p.getName())) {
+                                    p.setGameMode(GameMode.ADVENTURE);
+                                    p.sendMessage(getLocaleMessage("world.dev-mode.cant-dev-when-offline"));
+                                }
+                            }
+                        }
+                        p.hidePlayer(player);
+                        player.hidePlayer(p);
+                    }
+                } else {
+                    unloadPlot(oldPlot);
+                }
             }
         }
-
     }
-
 }

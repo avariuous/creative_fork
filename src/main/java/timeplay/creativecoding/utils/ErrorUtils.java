@@ -9,7 +9,7 @@ package timeplay.creativecoding.utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import timeplay.creativecoding.world.Plot;
+import timeplay.creativecoding.plots.Plot;
 
 public class ErrorUtils {
 
@@ -21,7 +21,7 @@ public class ErrorUtils {
 
     public static void sendPlotErrorMessage(Plot plot, String errorMessage) {
         Bukkit.getLogger().warning("В мире " + plot.plotName + " произошла ошибка плота: " + errorMessage);
-        for (Player player : plot.getPlayers(plot)) {
+        for (Player player : plot.getPlayers()) {
             player.sendMessage("§2 Ошибка §8» §fПроизошла ошибка в мире: " + errorMessage);
             player.playSound(player.getLocation(), Sound.valueOf("BLOCK_ANVIL_DESTROY"),100,2);
         }

@@ -7,11 +7,14 @@
 
 package timeplay.creativecoding.menu;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import timeplay.creativecoding.world.Plot;
+import timeplay.creativecoding.plots.Plot;
+import timeplay.creativecoding.plots.PlotManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,13 +33,17 @@ public class WorldSettingsMenu extends Menu {
 
         Map<Integer,ItemStack> items = new HashMap<>();
 
-        Plot plot = Plot.getPlotByPlayer(player);
+        Plot plot = PlotManager.getPlotByPlayer(player);
         items.put(40,getPlotExampleButton(plot));
         items.put(10,getPlotNameButton());
         items.put(11,getPlotDescriptionButton());
         items.put(12,getPlotIconButton());
         items.put(16,getPlotSpawnButton());
         items.put(15,getPlotSharingButton(plot));
+        items.put(19,getPlotCustomIDButton());
+        items.put(24,getPlotFlagsButton());
+        items.put(25,getPlotPlayersButton());
+        items.put(14,getPlotCategoryButton());
 
         this.setItems(items);
 
@@ -51,11 +58,24 @@ public class WorldSettingsMenu extends Menu {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(getLocaleItemName("menus.world-settings.items.world.name").replace("%plotName%",plot.plotName));
         List<String> lore = new ArrayList<>();
-        lore.add("§8ID: " + plot.worldID);
         for (String loreLine : getLocaleItemDescription("menus.world-settings.items.world.lore")) {
-            lore.add(loreLine.replace("%plotName%",plot.plotName).replace("%plotDescription%",plot.plotDescription).replace("%plotOnline%",String.valueOf(Plot.getOnline(plot))).replace("%plotOwner%",plot.owner).replace("%plotID%",plot.worldID));
+            if (loreLine.contains("%plotDescription%")) {
+                String[] newLines = plot.plotDescription.split("\\\\n");
+                for (String newLine : newLines) {
+                    lore.add(loreLine.replace("%plotDescription%",ChatColor.translateAlternateColorCodes('&',newLine)));
+                }
+            } else {
+                lore.add(parsePlotLines(plot,loreLine.replace("%id%",getLocaleMessage("menus.world-settings.items.world.id",false) + plot.plotCustomID)));
+            }
         }
         meta.setLore(lore);
+        item.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+        meta.addItemFlags(ItemFlag.HIDE_DESTROYS);
+        meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        meta.addItemFlags(ItemFlag.HIDE_DYE);
+        meta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
         item.setItemMeta(meta);
         return item;
     }
@@ -87,6 +107,24 @@ public class WorldSettingsMenu extends Menu {
         return item;
     }
 
+    public static ItemStack getPlotCategoryButton() {
+        ItemStack item = new ItemStack(Material.BOOKSHELF);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(getLocaleItemName("menus.world-settings.items.change-category.name"));
+        meta.setLore(getLocaleItemDescription("menus.world-settings.items.change-category.lore"));
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    public static ItemStack getPlotCustomIDButton() {
+        ItemStack item = new ItemStack(Material.LEAD);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(getLocaleItemName("menus.world-settings.items.change-id.name"));
+        meta.setLore(getLocaleItemDescription("menus.world-settings.items.change-id.lore"));
+        item.setItemMeta(meta);
+        return item;
+    }
+
     public static ItemStack getPlotSpawnButton() {
         ItemStack item = new ItemStack(Material.ENDER_PEARL);
         ItemMeta meta = item.getItemMeta();
@@ -96,13 +134,31 @@ public class WorldSettingsMenu extends Menu {
         return item;
     }
 
+    public static ItemStack getPlotFlagsButton() {
+        ItemStack item = new ItemStack(Material.PISTON);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(getLocaleItemName("menus.world-settings.items.plot-flags.name"));
+        meta.setLore(getLocaleItemDescription("menus.world-settings.items.plot-flags.lore"));
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    public static ItemStack getPlotPlayersButton() {
+        ItemStack item = new ItemStack(Material.PLAYER_HEAD);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(getLocaleItemName("menus.world-settings.items.plot-players.name"));
+        meta.setLore(getLocaleItemDescription("menus.world-settings.items.plot-players.lore"));
+        item.setItemMeta(meta);
+        return item;
+    }
+
     public static ItemStack getPlotSharingButton(Plot plot) {
-        boolean isPublic = plot.plotSharing == Plot.sharing.PUBLIC;
+        boolean isPublic = plot.plotSharing == Plot.Sharing.PUBLIC;
         Material material = Material.OAK_DOOR;
         if (!isPublic) material = Material.IRON_DOOR;
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName("§eПосещение мира");
+        meta.setDisplayName(getLocaleItemName("menus.world-settings.items.change-sharing.name"));
         List<String> lore = new ArrayList<>();
 
         String sharing1 = getLocaleMessage("menus.world-settings.items.change-sharing.sharing1",false);

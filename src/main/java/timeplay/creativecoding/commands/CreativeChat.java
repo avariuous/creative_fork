@@ -23,6 +23,7 @@ import static timeplay.creativecoding.utils.CooldownUtils.getCooldown;
 import static timeplay.creativecoding.utils.CooldownUtils.setCooldown;
 import static timeplay.creativecoding.utils.ErrorUtils.sendWarningErrorMessage;
 import static timeplay.creativecoding.utils.MessageUtils.getLocaleMessage;
+import static timeplay.creativecoding.utils.MessageUtils.parsePAPI;
 
 public class CreativeChat implements CommandExecutor {
 
@@ -57,9 +58,9 @@ public class CreativeChat implements CommandExecutor {
                         Bukkit.getLogger().info("[CREATIVE-CHAT] "+sender.getName()+": "+String.join(" ",args));
                         for (Player p : Bukkit.getOnlinePlayers()) {
                             if (!(creativeChatOff.contains(p))) {
-                                try {
-                                    p.sendMessage(ChatColor.translateAlternateColorCodes('&',plugin.getConfig().getString("messages.cc-chat").replace("%player%",sender.getName()).replace("%ccprefix%",plugin.getConfig().getString("messages.cc-prefix")).replace("%message%",String.join(" ",args))));
-                                } catch (NullPointerException e) {
+                                if (plugin.getConfig().getString("messages.cc-chat") != null)
+                                    p.sendMessage(ChatColor.translateAlternateColorCodes('&',parsePAPI(Bukkit.getPlayer(sender.getName()),plugin.getConfig().getString("messages.cc-chat")).replace("%player%",sender.getName()).replace("%cc-prefix%",plugin.getConfig().getString("messages.cc-prefix")).replace("%message%",String.join(" ",args))));
+                                } else {
                                     sendWarningErrorMessage("Не найдено в конфиге значение messages.cc-prefix messages.cc-chat");
                                     return true;
                                 }
@@ -70,7 +71,6 @@ public class CreativeChat implements CommandExecutor {
             } else {
                 sender.sendMessage(getLocaleMessage("creative-chat.cc-usage"));
             }
-        }
         return true;
     }
 }

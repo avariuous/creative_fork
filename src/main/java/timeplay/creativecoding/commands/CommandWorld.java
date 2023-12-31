@@ -1,3 +1,8 @@
+/*
+ Creative TimePlay 2023
+
+ Команда /world
+ */
 package timeplay.creativecoding.commands;
 
 import org.bukkit.Bukkit;
@@ -5,15 +10,18 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import timeplay.creativecoding.menu.WorldDeleteMobsMenu;
 import timeplay.creativecoding.menu.WorldSettingsMenu;
+import timeplay.creativecoding.plots.PlotManager;
 import timeplay.creativecoding.utils.CooldownUtils;
-import timeplay.creativecoding.world.Plot;
+import timeplay.creativecoding.plots.Plot;
 
 import static timeplay.creativecoding.commands.CommandAd.plugin;
 import static timeplay.creativecoding.utils.CooldownUtils.getCooldown;
 import static timeplay.creativecoding.utils.CooldownUtils.setCooldown;
+import static timeplay.creativecoding.utils.MessageUtils.getElapsedTime;
 import static timeplay.creativecoding.utils.MessageUtils.getLocaleMessage;
-import static timeplay.creativecoding.world.PlotManager.deletePlot;
+import static timeplay.creativecoding.plots.PlotManager.deletePlot;
 
 public class CommandWorld implements CommandExecutor {
 
@@ -32,9 +40,9 @@ public class CommandWorld implements CommandExecutor {
                 case "delete":
                     // Игрок
                     if (sender instanceof Player) {
-                        Plot plot = Plot.getPlotByPlayer(((Player) sender).getPlayer());
+                        Plot plot = PlotManager.getPlotByPlayer(((Player) sender).getPlayer());
                         if (sender.hasPermission("creative.delete")) {
-                            if (Plot.getOwner(plot).equalsIgnoreCase(sender.getName())) {
+                            if (plot.getOwner().equalsIgnoreCase(sender.getName())) {
                                 deletePlot(plot, ((Player) sender).getPlayer());
                             } else {
                                 // Обход на удаление для тех, у кого есть право
@@ -45,27 +53,48 @@ public class CommandWorld implements CommandExecutor {
                         }
                     // Консоль
                     } else {
-                        if (args.length < 1) return true;
+                        if (args.length == 1) return true;
                         Bukkit.getLogger().info("Удаляем мир: " + args[1]);
                         if (Bukkit.getWorld(args[1]) != null) {
-                            deletePlot(Plot.getPlotByWorld(Bukkit.getWorld(args[1])),null);
+                            deletePlot(PlotManager.getPlotByWorld(Bukkit.getWorld(args[1])),null);
                         } else {
                             Bukkit.getLogger().warning("Такой мир не существует " + args[1]);
                         }
                     }
                     break;
+                case "deletemobs":
+                    if (sender instanceof Player) {
+                        Plot plot = PlotManager.getPlotByPlayer(((Player) sender).getPlayer());
+                        if (plot != null && (plot.getOwner().equalsIgnoreCase(sender.getName()))) {
+                            WorldDeleteMobsMenu.openInventory(((Player) sender).getPlayer());
+                        }
+                    }
+                    break;
+                case "info":
+                    Plot plot = PlotManager.getPlotByPlayer(((Player) sender).getPlayer());
+                    if (plot == null) return true;
+                    long now = System.currentTimeMillis();
+                    sender.sendMessage(getLocaleMessage("world.info").replace("%name%",plot.plotName)
+                            .replace("%id%", plot.worldID).replace("%creation-time%",getElapsedTime(now,plot.getCreationTime()))
+                            .replace("%activity-time%",getElapsedTime(now,plot.getLastActivityTime())).replace("%online%",String.valueOf(plot.getOnline()))
+                            .replace("%builders%",plot.getBuilders()).replace("%coders%",plot.getDevelopers()).replace("%owner%",plot.getOwner()));
+                    break;
             }
         } else {
             if (sender instanceof Player) {
-                if (((Player) sender).getPlayer().getWorld().getName().contains("world")) {
+                Plot plot = PlotManager.getPlotByPlayer(((Player) sender).getPlayer());
+                if (plot == null) {
                     ((Player) sender).getPlayer().sendMessage(getLocaleMessage("only-in-world"));
                     return true;
                 }
-                Plot plot = Plot.getPlotByPlayer(((Player) sender).getPlayer());
-                if (Plot.getOwner(plot).equalsIgnoreCase(sender.getName())) {
+                if (plot.getOwner().equalsIgnoreCase(sender.getName())) {
                     WorldSettingsMenu.openInventory(((Player) sender).getPlayer());
                 } else {
-                    sender.sendMessage(getLocaleMessage("not-owner"));
+                    long now = System.currentTimeMillis();
+                    sender.sendMessage(getLocaleMessage("world.info").replace("%name%",plot.plotName)
+                            .replace("%id%", plot.worldID).replace("%creation-time%",getElapsedTime(now,plot.getCreationTime()))
+                            .replace("%activity-time%",getElapsedTime(now,plot.getLastActivityTime())).replace("%online%",String.valueOf(plot.getOnline()))
+                            .replace("%builders%",plot.getBuilders()).replace("%coders%",plot.getDevelopers()).replace("%owner%",plot.getOwner()));
                 }
             } else {
                 Bukkit.getLogger().info("Управление мирами: ");

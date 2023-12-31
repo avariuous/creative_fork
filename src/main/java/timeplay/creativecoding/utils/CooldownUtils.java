@@ -66,7 +66,7 @@ public class CooldownUtils {
             case WORLD_CHAT:
                 return worldChatCooldown;
             default:
-                throw new IllegalArgumentException("Невозможно получить заддержку с типом: " + type);
+                throw new IllegalArgumentException("Невозможно получить задержку с типом: " + type);
         }
     }
 

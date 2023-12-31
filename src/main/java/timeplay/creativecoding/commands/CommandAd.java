@@ -13,51 +13,52 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import timeplay.creativecoding.plots.PlotManager;
 import timeplay.creativecoding.utils.CooldownUtils;
-import timeplay.creativecoding.world.Plot;
+import timeplay.creativecoding.plots.Plot;
 
-import java.io.File;
-
+import static timeplay.creativecoding.plots.PlotManager.plots;
 import static timeplay.creativecoding.utils.CooldownUtils.getCooldown;
 import static timeplay.creativecoding.utils.CooldownUtils.setCooldown;
-import static timeplay.creativecoding.utils.FileUtils.*;
 import static timeplay.creativecoding.utils.MessageUtils.getLocaleMessage;
-import static timeplay.creativecoding.world.Plot.teleportToPlot;
-import static timeplay.creativecoding.world.PlotManager.loadPlot;
+import static timeplay.creativecoding.plots.Plot.teleportToPlot;
 
 public class CommandAd implements CommandExecutor {
 
+    @NotNull
     final static Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Creative");
+
     @Override
     public boolean onCommand(CommandSender sender,Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = ((Player) sender).getPlayer();
-            Plot plot = Plot.getPlotByPlayer(player);
+            Plot plot = PlotManager.getPlotByPlayer(player);
             if (args.length == 1) {
                 if (getCooldown(player, CooldownUtils.CooldownType.GENERIC_COMMAND) > 0) {
                     player.sendMessage(getLocaleMessage("cooldown").replace("%cooldown%",String.valueOf(getCooldown(player,CooldownUtils.CooldownType.GENERIC_COMMAND))));
                     return true;
                 }
                 setCooldown(player,plugin.getConfig().getInt("cooldowns.generic-command"), CooldownUtils.CooldownType.GENERIC_COMMAND);
-                File[] worldsFolders = getWorldsFolders(true);
-                if (worldsFolders.length > 0) {
-                    boolean worldExists = false;
-                    for (File world : worldsFolders) {
-                        if (world.getName().replace("plot","").equals(args[0])) {
-                            worldExists = true;
+                if (plots.size() > 0) {
+                    Plot foundPlot = null;
+                    for (Plot searchablePlot : plots) {
+                        if (searchablePlot.worldID.equals(args[0])) {
+                            foundPlot = searchablePlot;
+                            break;
+                        } else if (searchablePlot.plotCustomID.equalsIgnoreCase(args[0])) {
+                            foundPlot = searchablePlot;
                             break;
                         }
                     }
-                    if (worldExists) {
-                        String worldName = "plot" + args[0];
-                        teleportToPlot(player,worldName);
+                    if (foundPlot != null) {
+                        teleportToPlot(player,foundPlot);
                     } else {
                         player.playSound(player.getLocation(),Sound.valueOf("BLOCK_ANVIL_DESTROY"),100,2);
                         player.clearTitle();
@@ -69,7 +70,7 @@ public class CommandAd implements CommandExecutor {
                     player.sendMessage(getLocaleMessage("no-plot-found",player));
                 }
             } else {
-                if (!player.getWorld().getName().startsWith("plot")) {
+                if (plot == null) {
                     player.sendMessage(getLocaleMessage("only-in-world"));
                     return true;
                 }
@@ -79,9 +80,9 @@ public class CommandAd implements CommandExecutor {
                 }
                 setCooldown(player,plugin.getConfig().getInt("cooldowns.advertisement"), CooldownUtils.CooldownType.ADVERTISEMENT_COMMAND);
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    TextComponent advertisement = new TextComponent("§7 \n§7 " + player.getName() + "§7 приглашает вас в игру:\n §f" + Plot.getPlotName(plot) + "\n §f \n §a [Нажмите, чтобы зайти]\n§f");
+                    TextComponent advertisement = new TextComponent("§7 \n§7 " + player.getName() + "§7 приглашает вас в игру:\n §f" + plot.getPlotName() + "\n §f \n §a [Нажмите, чтобы зайти]\n§f");
                     advertisement.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(getLocaleMessage("advertisement.hover"))));
-                    advertisement.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ad " + player.getWorld().getName().replace("plot","")));
+                    advertisement.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ad " + player.getWorld().getName().replace("plot","").replace("dev","")));
                         p.sendMessage(advertisement);
                 }
             }

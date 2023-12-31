@@ -1,11 +1,13 @@
 name: Creative
-version: '1.3'
+version: '1.4'
 main: timeplay.creativecoding.Main
 api-version: 1.16
 authors: [ TimePlay ]
 description: Let players create the worlds
+prefix: "Creative+"
+softdepend: [PlaceholderAPI]
 commands:
-  creativecoding:
+  creative:
     usage: /creativecoding
     aliases: [coding,creative]
   chat:
@@ -29,12 +31,15 @@ commands:
   like:
     usage: /like
     aliases: [дшлу, vote, v]
+  dislike:
+    usage: /dislike
+    aliases: [вшыдшлу, вшідшлу]
   spawn:
     usage: /spawn
     aliases: [спавн, ізфцт, ызфцт, hub, lobby]
   menu:
     usage: /menu
-    aliases: [меню, games, worlds, ьутг, minigames]
+    aliases: [меню, games, worlds, ьутг, minigames, g, п]
   world:
     usage: /world
     aliases: [settings, game, іуеештпі, ыуеештпы, setting]

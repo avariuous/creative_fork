@@ -1,3 +1,8 @@
+/*
+ Creative TimePlay 2023
+
+ Меню
+ */
 package timeplay.creativecoding.menu;
 
 import org.bukkit.Bukkit;

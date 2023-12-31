@@ -1,3 +1,8 @@
+/*
+ Creative TimePlay 2023
+
+ Команда /spawn
+ */
 package timeplay.creativecoding.commands;
 
 import org.bukkit.Bukkit;

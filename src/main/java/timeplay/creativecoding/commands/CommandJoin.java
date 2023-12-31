@@ -7,24 +7,20 @@
 
 package timeplay.creativecoding.commands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import timeplay.creativecoding.plots.Plot;
 import timeplay.creativecoding.utils.CooldownUtils;
 
-import java.io.File;
-
 import static timeplay.creativecoding.commands.CommandAd.plugin;
+import static timeplay.creativecoding.plots.PlotManager.plots;
 import static timeplay.creativecoding.utils.CooldownUtils.getCooldown;
 import static timeplay.creativecoding.utils.CooldownUtils.setCooldown;
-import static timeplay.creativecoding.utils.FileUtils.getWorldsFolders;
 import static timeplay.creativecoding.utils.MessageUtils.getLocaleMessage;
-import static timeplay.creativecoding.world.Plot.teleportToPlot;
-import static timeplay.creativecoding.world.PlotManager.loadPlot;
+import static timeplay.creativecoding.plots.Plot.teleportToPlot;
 
 public class CommandJoin implements CommandExecutor {
     @Override
@@ -37,18 +33,19 @@ public class CommandJoin implements CommandExecutor {
             setCooldown(((Player) sender).getPlayer(),plugin.getConfig().getInt("cooldowns.generic-command"), CooldownUtils.CooldownType.GENERIC_COMMAND);
             Player player = ((Player) sender).getPlayer();
             if (args.length == 1) {
-                File[] worldsFolders = getWorldsFolders(true);
-                if (worldsFolders.length > 0) {
-                    boolean worldExists = false;
-                    for (File world : worldsFolders) {
-                        if (world.getName().replace("plot","").equals(args[0])) {
-                            worldExists = true;
+                if (plots.size() > 0) {
+                    Plot foundPlot = null;
+                    for (Plot searchablePlot : plots) {
+                        if (searchablePlot.worldID.equals(args[0])) {
+                            foundPlot = searchablePlot;
+                            break;
+                        } else if (searchablePlot.plotCustomID.equalsIgnoreCase(args[0])) {
+                            foundPlot = searchablePlot;
                             break;
                         }
                     }
-                    if (worldExists) {
-                        String worldName = "plot" + args[0];
-                        teleportToPlot(player,worldName);
+                    if (foundPlot != null) {
+                        teleportToPlot(player,foundPlot);
                     } else {
                         player.playSound(player.getLocation(),Sound.valueOf("BLOCK_ANVIL_DESTROY"),100,2);
                         player.clearTitle();
