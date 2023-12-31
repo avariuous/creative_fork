@@ -17,23 +17,23 @@ Creative+ - plugin, that allows players to create their worlds, set up them, bui
 
 ## Needs to be created 📜
 
-- [x] **Создание мира**
+- [x] **World Creation**
 
-- [x] **Меню со списками миров**
+- [x] **Worlds list menu**
 
-- [x] **Настройка своего мира**
+- [x] **Worlds settings**
 
-- [x] Лимит миров на игрока
+- [x] Worlds limit
 
 - [ ] World Templates
 
-- [x] **Режим разработчика, кодинг и DEV-мир**
+- [x] **Development mode**
 
-- [x] **Распределение прав участников на /build /dev**
+- [x] **Players Managment**
 
 - [ ] Much more...
 
-## Команды
+## Commands
 
 `/menu /games /worlds` - **Open**
 
@@ -54,6 +54,8 @@ Creative+ - plugin, that allows players to create their worlds, set up them, bui
 `/creative reload` - **Reload plugin** (`creative.reload`)
 
 `/creative resetlocale` - **Reset locale messages.** Useful only when developing plugin (`creative.resetlocale`)
+
+Bypass the closed world `creative.private.bypass`
 
 ## Old versions
 
